@@ -7,11 +7,12 @@
 #include <boost/filesystem.hpp>
 #include <algorithm>
 #include <vector>
+#include <string>
 #include <stdio.h>
 
 std::vector<cv::Mat> loadTemplates();
 
-void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ);
+std::string templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ);
 // Your code goes here
 
 # endif // IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP

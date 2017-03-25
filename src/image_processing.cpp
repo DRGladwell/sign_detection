@@ -2,20 +2,25 @@
 
 std::vector<cv::Mat> loadTemplates()
 {
+	std::vector<std::string> files;
 	std::vector<cv::Mat> templates;
 	
 	boost::filesystem::path images_path("src/b39vt_assignment/data/");
 	boost::filesystem::directory_iterator end;
 
 	for ( boost::filesystem::directory_iterator it(images_path); it != end; ++it )
-		templates.push_back(cv::imread(it->path().string()));
+	  files.push_back(it->path().string());
+	
+	std::sort(files.begin(), files.end());
+	
+	for ( int i = 0; i < files.size(); ++i )
+		templates.push_back(cv::imread(files[i]));
 	
 	return templates;
 }
 
-void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
+std::string templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 {
-	// Your code goes here
 	std::vector<int> num_matches;
 	
 	for ( int i = 0; i < templ.size(); ++i )
@@ -23,13 +28,13 @@ void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 		cv::Mat img_1 = im;
 		cv::Mat img_2 = templ[i];
 		
+		// Choose the size of the templates in pixels
 		cv::resize(img_2, img_2, cv::Size(200, 200));
 	
 		//-- Step 1: Detect the keypoints
 		//cv::OrbFeatureDetector detector(25, 1.0f, 2, 10, 0, 2, 0, 10);
 		cv::OrbFeatureDetector detector;
-		//cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("BRISK");
-	
+		
 		std::vector<cv::KeyPoint> keypoints_1, keypoints_2;
 
 		detector.detect( img_1, keypoints_1 );
@@ -37,17 +42,11 @@ void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 
 		//-- Step 2: Calculate descriptors (feature vectors)
 		cv::OrbDescriptorExtractor extractor;
-		//cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create("BRISK");
-	
+		
 		cv::Mat descriptors_1, descriptors_2;
 
 		extractor.compute( img_1, keypoints_1, descriptors_1 );
 		extractor.compute( img_2, keypoints_2, descriptors_2 );
-		
-		printf("-- keypoints_1 size = %d\n", keypoints_1.size());
-		printf("-- keypoints_2 size = %d\n", keypoints_2.size());
-		printf("-- descriptors_1 size = %d x %d\n", descriptors_1.size().height, descriptors_1.size().width);
-		printf("-- descriptors_2 size = %d x %d\n", descriptors_2.size().height, descriptors_2.size().width);
 		
 		if (descriptors_1.type() != CV_32F)
 			descriptors_1.convertTo(descriptors_1, CV_32F);
@@ -69,8 +68,8 @@ void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 		  if( dist > max_dist ) max_dist = dist;
 		}
 
-		printf("-- Max dist : %f \n", max_dist );
-		printf("-- Min dist : %f \n", min_dist );
+		//printf("-- Max dist : %f \n", max_dist );
+		//printf("-- Min dist : %f \n", min_dist );
 
 		//-- Draw only "good" matches (i.e. whose distance is less than 2*min_dist,
 		//-- or a small arbitary value ( 0.02 ) in the event that min_dist is very
@@ -79,16 +78,15 @@ void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 		std::vector< cv::DMatch > good_matches;
 
 		for( int i = 0; i < descriptors_1.rows; i++ )
-		{ //printf("Distance = %f\n", matches[i].distance);
+		{
 			if( matches[i].distance <= std::max(2*min_dist, 0.02) )
-			//if( matches[i].distance <= std::max(3*min_dist, 0.1) )
 		  { good_matches.push_back( matches[i]); }
 		}
 		
 		num_matches.push_back(good_matches.size());
 
 		//-- Draw only "good" matches
-		cv::Mat img_matches;
+		/*cv::Mat img_matches;
 		drawMatches( img_1, keypoints_1, img_2, keypoints_2,
 		             good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
 		             std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
@@ -99,36 +97,35 @@ void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ)
 		for( int i = 0; i < (int)good_matches.size(); i++ )
 		{ printf( "-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  \n", i, good_matches[i].queryIdx, good_matches[i].trainIdx ); }
 
-		cv::waitKey(0);
+		cv::waitKey(0);*/
 	}
 	
 	int match = distance(num_matches.begin(), std::max_element(num_matches.begin(), num_matches.end()));
 	
+	int max_num_matches = num_matches[match];
+	
+	// If the number of matches is less than a threshold, return nothing
+	if ( max_num_matches < 4 )
+	  return "NOTHING";
+	
+	// Check that the order in which the images are loaded is the same as here. This depends on the names of the images since they are ordered alphabetically when loaded.
 	switch (match)
 	{
 		case 0:
-			printf("\nThe image is 'DEAD MAN'\n\n");
-			break;
+			return "BIOHAZARD";
 		case 1:
-			printf("\nThe image is 'TOXIC'\n\n");
-			break;
+			return "DANGER";
 		case 2:
-			printf("\nThe image is 'ALIVE MAN'\n\n");
-			break;
+			return "FIRE";
 		case 3:
-			printf("\nThe image is 'RADIOACTIVE'\n\n");
-			break;
+			return "MAN_ALIVE";
 		case 4:
-			printf("\nThe image is 'FIRE'\n\n");
-			break;
+			return "RADIOACTIVE";
 		case 5:
-			printf("\nThe image is 'DANGER'\n\n");
-			break;
+			return "MAN_DEAD";
 		case 6:
-			printf("\nThe image is 'BIOHAZARD'\n\n");
-			break;
+			return "NO_SMOKING";
 		case 7:
-			printf("\nThe image is 'NO SMOKING'\n\n");
-			break;
+			return "TOXIC";
 	}
 }

@@ -2,6 +2,7 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <std_msgs/String.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -14,9 +15,11 @@ class ImageSubscriber
   image_transport::ImageTransport it_;
   image_transport::Subscriber image_sub_;
   
+  ros::Publisher label_pub_;
+  
   cv_bridge::CvImagePtr cv_ptr;
   
-  const std::string OPENCV_WINDOW;
+  //const std::string OPENCV_WINDOW;
   
 public:
 	// Public variables - it is a good practice to separate the declaration of
@@ -30,13 +33,15 @@ public:
     // Subscribe to input video feed
     image_sub_ = it_.subscribe("/usb_cam/image_raw", 1, 
       &ImageSubscriber::imageCb, this);
+    
+    label_pub_ = nh_.advertise<std_msgs::String>("label", 1, this);
 
-    cv::namedWindow(OPENCV_WINDOW);
+    //cv::namedWindow(OPENCV_WINDOW);
   }
 
   ~ImageSubscriber()
   {
-    cv::destroyWindow(OPENCV_WINDOW);
+    //cv::destroyWindow(OPENCV_WINDOW);
   }
 
   void imageCb(const sensor_msgs::ImageConstPtr& msg)
@@ -62,6 +67,13 @@ public:
   {
   	return cv_ptr->image;
   }
+  
+  void publish( std::string s )
+  {
+    std_msgs::String msg;
+    msg.data = s;
+    label_pub_.publish(msg);
+  }
 };
 
 int main(int argc, char** argv)
@@ -80,14 +92,18 @@ int main(int argc, char** argv)
   	cv::waitKey(0);
   }*/
   
+  ros::Rate r = 1;
+  
   while (ros::ok())
   {
 		if (ic.data_valid)
 		{
-			templateMatching(ic.getImage(), templs);
-			// Your code goes here
+			std::string label = templateMatching(ic.getImage(), templs);
+			
+			ic.publish(label);
 		}
   	ros::spinOnce();
+  	r.sleep();
   }
   return 0;
 }
