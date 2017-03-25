@@ -25,7 +25,7 @@ public:
   
 public:
 	// Public methods
-  ImageSubscriber() : it_(nh_), data_valid(false), OPENCV_WINDOW("Image window")
+  ImageSubscriber() : it_(nh_), data_valid(false)//, OPENCV_WINDOW("Image window")
   {
     // Subscribe to input video feed
     image_sub_ = it_.subscribe("/usb_cam/image_raw", 1, 
@@ -57,6 +57,11 @@ public:
     //cv::imshow(OPENCV_WINDOW, cv_ptr->image);
     //cv::waitKey(3);
   }
+  
+  cv::Mat getImage()
+  {
+  	return cv_ptr->image;
+  }
 };
 
 int main(int argc, char** argv)
@@ -64,15 +69,22 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "image_subscriber");
   ImageSubscriber ic;
   
-  // Dummy variables - Replace with your own
-  cv::Mat a;
-  cv::Mat b;
+  cv::namedWindow("Templates");
+  
+  // Load templates
+  std::vector<cv::Mat> templs = loadTemplates();
+  
+  /*for ( int i = 0; i < templs.size(); ++i )
+  {
+  	cv::imshow("Templates", templs[i]);
+  	cv::waitKey(0);
+  }*/
   
   while (ros::ok())
   {
 		if (ic.data_valid)
 		{
-			templateMatching(a, b);
+			templateMatching(ic.getImage(), templs);
 			// Your code goes here
 		}
   	ros::spinOnce();

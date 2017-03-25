@@ -2,8 +2,16 @@
 #define IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP
 
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <boost/filesystem.hpp>
+#include <algorithm>
+#include <vector>
+#include <stdio.h>
 
-void templateMatching(const cv::Mat& im, const cv::Mat& templ);
+std::vector<cv::Mat> loadTemplates();
+
+void templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ);
 // Your code goes here
 
 # endif // IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP
