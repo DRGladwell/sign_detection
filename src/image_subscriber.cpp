@@ -6,7 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "b39vt_assignment/image_processing.hpp"
+#include "sign_detection/image_processing.hpp"
 
 class ImageSubscriber
 {

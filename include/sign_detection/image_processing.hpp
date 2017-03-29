@@ -1,5 +1,5 @@
-#ifndef IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP
-#define IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP
+#ifndef IMAGE_PROCESSING_SIGN_DETECTION_HPP
+#define IMAGE_PROCESSING_SIGN_DETECTION_HPP
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -15,4 +15,4 @@ std::vector<cv::Mat> loadTemplates();
 std::string templateMatching(const cv::Mat& im, const std::vector<cv::Mat>& templ);
 // Your code goes here
 
-# endif // IMAGE_PROCESSING_B39VT_ASSIGNMENT_HPP
+# endif // IMAGE_PROCESSING_SIGN_DETECTION_HPP

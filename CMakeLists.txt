@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(b39vt_assignment)
+project(sign_detection)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -104,7 +104,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES b39vt_assignment
+#  LIBRARIES sign_detection
 #  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
@@ -122,14 +122,14 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(b39vt_assignment
-#   src/${PROJECT_NAME}/b39vt_assignment.cpp
+# add_library(sign_detection
+#   src/${PROJECT_NAME}/sign_detection.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(b39vt_assignment ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(sign_detection ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 add_executable(image_subscriber src/image_subscriber.cpp src/image_processing.cpp)
@@ -158,7 +158,7 @@ target_link_libraries(image_subscriber
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS b39vt_assignment b39vt_assignment_node
+# install(TARGETS sign_detection sign_detection_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -183,7 +183,7 @@ target_link_libraries(image_subscriber
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_b39vt_assignment.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sign_detection.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

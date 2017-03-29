@@ -1,11 +1,11 @@
-#include "b39vt_assignment/image_processing.hpp"
+#include "sign_detection/image_processing.hpp"
 
 std::vector<cv::Mat> loadTemplates()
 {
 	std::vector<std::string> files;
 	std::vector<cv::Mat> templates;
 	
-	boost::filesystem::path images_path("src/b39vt_assignment/data/");
+	boost::filesystem::path images_path("src/sign_detection/data/");
 	boost::filesystem::directory_iterator end;
 
 	for ( boost::filesystem::directory_iterator it(images_path); it != end; ++it )
